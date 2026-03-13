@@ -11,7 +11,6 @@ functions_azure/
 ├── hello_function_azure/       # Basic HTTP function: hello world
 ├── binding_example/            # Input and output bindings example
 ├── blob_function/              # Function triggered by Blob Storage events
-├── blob_upload_appservice/     # File upload to Blob Storage via a web interface
 ├── eventhub_function/          # Function triggered by Azure Event Hubs
 └── parkings_function_azure/    # HTTP function that queries parking data
 ```
@@ -68,15 +67,6 @@ A function that is automatically triggered when a file is uploaded or modified i
   }
 }
 ```
-
----
-
-### `blob_upload_appservice`
-
-A small web application (HTML + Python) that allows uploading files to Azure Blob Storage through a browser interface. Combines Azure Functions with a simple HTML frontend.
-
-**Trigger:** HTTP  
-**Key concepts:** file upload, Blob Storage integration, CORS
 
 ---
 
