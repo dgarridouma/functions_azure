@@ -12,7 +12,9 @@ functions_azure/
 ├── binding_example/            # Input and output bindings example
 ├── blob_function/              # Function triggered by Blob Storage events
 ├── eventhub_function/          # Function triggered by Azure Event Hubs
-└── parkings_function_azure/    # HTTP function that queries parking data
+├── parkings_function_azure/    # HTTP function that queries parking data
+├── iris_function/              # HTTP function serving a scikit-learn ML model
+└── sentiments_function/        # HTTP function using Azure AI Language
 ```
 
 ---
@@ -101,6 +103,93 @@ func start
 
 ---
 
+### `iris_function`
+
+An HTTP function that serves a RandomForest classification model trained on the Iris dataset. Demonstrates how to take a model from a notebook and expose it as an API.
+
+The model is trained locally with `train_model.py` and serialized to `model.pkl`, which is included in the deployment package. The model is loaded once at startup, outside the handler.
+
+**Trigger:** HTTP  
+**Request:**
+```json
+{"features": [5.1, 3.5, 1.4, 0.2]}
+```
+
+**Response:**
+```json
+{
+  "class": 0,
+  "species": "setosa",
+  "probabilities": {"setosa": 0.97, "versicolor": 0.02, "virginica": 0.01}
+}
+```
+
+**Setup:**
+```bash
+cd iris_function
+pip install -r requirements.txt
+python train_model.py       # generates model.pkl
+```
+
+Then press `F5` in VS Code or run `func start`.
+
+**`local.settings.json`:**
+```json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true"
+  }
+}
+```
+
+---
+
+### `sentiments_function`
+
+An HTTP function that analyzes sentiment and extracts key phrases from a list of texts using the **Azure AI Language** managed service. Demonstrates the pattern of consuming an existing AI service rather than deploying your own model.
+
+**Trigger:** HTTP  
+**Request:**
+```json
+{
+  "texts": [
+    "I love this master, I'm learning a lot about cloud",
+    "The deployment failed three times and I don't know why"
+  ]
+}
+```
+
+**Response:**
+```json
+{
+  "results": [
+    {
+      "text": "I love this master...",
+      "sentiment": "positive",
+      "confidence": {"positive": 0.99, "neutral": 0.01, "negative": 0.0},
+      "key_phrases": ["master", "cloud"]
+    }
+  ]
+}
+```
+
+**Prerequisites:** Create an **Azure AI Language** resource in the portal (Free F0 tier — 5,000 transactions/month).
+
+**`local.settings.json`:**
+```json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "LANGUAGE_ENDPOINT": "https://<YOUR_RESOURCE>.cognitiveservices.azure.com/",
+    "LANGUAGE_KEY": "<YOUR_KEY>"
+  }
+}
+```
+
+---
+
 ## Running an Example Locally
 
 1. Navigate to the example folder:
@@ -108,16 +197,7 @@ func start
    cd <example_folder>
    ```
 
-2. Create a `local.settings.json` file with the required configuration (see each example above):
-   ```json
-   {
-     "IsEncrypted": false,
-     "Values": {
-       "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-       "FUNCTIONS_WORKER_RUNTIME": "python"
-     }
-   }
-   ```
+2. Create a `local.settings.json` file with the required configuration (see each example above).
 
 3. Install dependencies:
    ```bash
@@ -139,7 +219,7 @@ From VSCode with the Azure Functions extension:
 
 1. Press `F1` and select `Azure Functions: Deploy to Function App`
 2. Choose or create a Function App in your subscription
-3. Set environment variables in **Azure Portal > Function App > Configuration > Application Settings**
+3. Set environment variables in **Azure Portal > Function App > Environment variables**
 
 Or from the terminal:
 
@@ -156,6 +236,7 @@ func azure functionapp publish <YOUR_FUNCTION_APP_NAME>
 - [Triggers and bindings overview](https://learn.microsoft.com/azure/azure-functions/functions-triggers-bindings)
 - [Blob Storage trigger](https://learn.microsoft.com/azure/azure-functions/functions-bindings-storage-blob-trigger)
 - [Event Hubs trigger](https://learn.microsoft.com/azure/azure-functions/functions-bindings-event-hubs-trigger)
+- [Azure AI Language](https://learn.microsoft.com/azure/ai-services/language-service/)
 
 ---
 
