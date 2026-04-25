@@ -45,11 +45,11 @@ This code runs **outside the handler function**, at module load time. This is im
 ## 3. The handler function
 
 ```python
-@app.route(route="predecir", methods=["POST"])
-def predecir(req: func.HttpRequest) -> func.HttpResponse:
+@app.route(route="predict", methods=["POST"])
+def predict(req: func.HttpRequest) -> func.HttpResponse:
 ```
 
-The decorator registers this function as an HTTP trigger responding to POST requests at the route `/api/predecir`.
+The decorator registers this function as an HTTP trigger responding to POST requests at the route `/api/predict`.
 
 **Input validation:**
 ```python
@@ -80,7 +80,7 @@ probs      = model.predict_proba([features])[0]
 ## 4. Making a request
 
 ```bash
-curl -X POST http://localhost:7071/api/predecir \
+curl -X POST http://localhost:7071/api/predict \
   -H "Content-Type: application/json" \
   -d '{"features": [5.1, 3.5, 1.4, 0.2]}'
 ```
@@ -90,7 +90,7 @@ Or from Python:
 ```python
 import requests
 
-r = requests.post("http://localhost:7071/api/predecir",
+r = requests.post("http://localhost:7071/api/predict",
                   json={"features": [5.1, 3.5, 1.4, 0.2]})
 print(r.json())
 ```
@@ -129,7 +129,7 @@ print(r.json())
 If you send fewer or more than 4 features:
 
 ```bash
-curl -X POST http://localhost:7071/api/predecir \
+curl -X POST http://localhost:7071/api/predict \
   -d '{"features": [5.1, 3.5]}'
 ```
 
