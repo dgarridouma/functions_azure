@@ -5,13 +5,14 @@ from azure.cosmos import CosmosClient, PartitionKey, exceptions
 import csv
 import requests
 import uuid
+import os
 
 app = func.FunctionApp()
 
 URL='https://datosabiertos.malaga.eu/recursos/aparcamientos/ocupappublicosmun/ocupappublicosmun.csv'
 
 # Crear el cliente de Cosmos DB con la cadena de conexión
-connection_string = "AccountEndpoint=https://YOUR_COSMOS_DB_ACCOUNT.documents.azure.com:443/;AccountKey=YOUR_COSMOS_DB_ACCOUNT_KEY;"
+connection_string = os.environ["COSMOSDB_CONN_STRING"]
 client = CosmosClient.from_connection_string(connection_string)
 
 # Crear la base de datos y el contenedor si no existen
