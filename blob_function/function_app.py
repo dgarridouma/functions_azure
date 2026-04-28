@@ -7,8 +7,8 @@ import os
 
 app = func.FunctionApp()
 
-@app.blob_trigger(arg_name="myblob", path="miruta",
-                               connection="micuentaaci_STORAGE") 
+#@app.blob_trigger(arg_name="myblob", path="miruta/{name}",
+@app.blob_trigger(arg_name="myblob", path="miruta/{name}", source="EventGrid",                               connection="micuentaaci_STORAGE") 
 def blob_trigger(myblob: func.InputStream):
     logging.info(f"Python blob trigger function processed blob"
                 f"Name: {myblob.name}"
